@@ -68,13 +68,9 @@ select{
 .paper{
     background:white;
     border:3px solid black;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    font-size:1.3rem;
-    font-weight:bold;
+    box-sizing:border-box;
+    padding:12px;
+    overflow:hidden;
 }
 
 #a4Paper{
@@ -85,6 +81,16 @@ select{
 #scaledPaper{
     width:148px;
     height:210px;
+}
+
+.sampleText{
+    text-align:left;
+    line-height:1.4;
+    word-break:break-all;
+}
+
+.baseText{
+    font-size:10pt;
 }
 
 #info{
@@ -125,19 +131,39 @@ value="100">
 <div id="paperArea">
 
 <div class="paperGroup">
-<div class="paperLabel">基準（A4）</div>
+
+<div class="paperLabel">
+基準（A4）
+</div>
 
 <div id="a4Paper" class="paper">
-A4
+
+<div class="sampleText baseText">
+福岡県<br>
+北九州市<br>
+八幡東区
 </div>
+
+</div>
+
 </div>
 
 <div class="paperGroup">
-<div class="paperLabel">拡大後</div>
+
+<div class="paperLabel">
+拡大後
+</div>
 
 <div id="scaledPaper" class="paper">
-100%
+
+<div id="scaledText" class="sampleText">
+福岡県<br>
+北九州市<br>
+八幡東区
 </div>
+
+</div>
+
 </div>
 
 </div>
@@ -165,6 +191,9 @@ document.getElementById("scaleSlider");
 
 const scaledPaper =
 document.getElementById("scaledPaper");
+
+const scaledText =
+document.getElementById("scaledText");
 
 const info =
 document.getElementById("info");
@@ -207,11 +236,14 @@ function updateDisplay(){
     scaledPaper.style.height =
     height + "px";
 
+    const currentPt =
+    10 * scale / 100;
+
+    scaledText.style.fontSize =
+    currentPt + "pt";
+
     const decimals =
     Number(decimalSelect.value);
-
-    scaledPaper.textContent =
-    scale.toFixed(decimals) + "%";
 
     const realWidth =
     210 * scale / 100;
@@ -224,7 +256,10 @@ function updateDisplay(){
 
     info.innerHTML =
 
-    `横 210 mm → ${realWidth.toFixed(decimals)} mm<br>
+    `拡大後の文字サイズ：${currentPt.toFixed(decimals)} pt<br><br>
+
+     横 210 mm → ${realWidth.toFixed(decimals)} mm<br>
+
      縦 297 mm → ${realHeight.toFixed(decimals)} mm<br><br>`;
 
 }
