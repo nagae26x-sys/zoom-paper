@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>A判用紙 拡大率シミュレーター</title>
+
+<style>
+
+body{
+    font-family:"Yu Gothic",sans-serif;
+    text-align:center;
+    margin:20px;
+}
+
+h1{
+    font-size:2rem;
+}
+
+.control{
+    margin:20px 0;
+}
+
+label{
+    font-size:1.2rem;
+    font-weight:bold;
+}
+
+input[type="number"]{
+    font-size:1.4rem;
+    width:140px;
+    text-align:center;
+}
+
+input[type="range"]{
+    width:80%;
+}
+
+select{
+    font-size:1.2rem;
+    padding:6px;
+}
+
+#paperArea{
+    display:flex;
+    justify-content:center;
+    align-items:flex-end;
+    gap:80px;
+    margin-top:30px;
+    min-height:500px;
+}
+
+.paperGroup{
+    text-align:center;
+}
+
+.paperLabel{
+    font-size:1.4rem;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.paper{
+    background:white;
+    border:3px solid black;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:1.3rem;
+    font-weight:bold;
+}
+
+#a4Paper{
+    width:148px;
+    height:210px;
+}
+
+#scaledPaper{
+    width:148px;
+    height:210px;
+}
+
+#info{
+    font-size:1.4rem;
+    margin-top:20px;
+    line-height:1.8;
+    font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>A判用紙 拡大率シミュレーター</h1>
+
+<div class="control">
+<label>表示する小数桁数</label>
+<br><br>
+
+<select id="decimalSelect">
+<option value="0">整数</option>
+<option value="1">0.1まで</option>
+<option value="2">0.01まで</option>
+</select>
+</div>
+
+<div class="control">
+<label>拡大率 (%)</label>
+<br><br>
+
+<input
+type="number"
+id="scaleInput"
+value="100">
+</div>
+
+<div id="paperArea">
+
+<div class="paperGroup">
+<div class="paperLabel">基準（A4）</div>
+
+<div id="a4Paper" class="paper">
+A4
+</div>
+</div>
+
+<div class="paperGroup">
+<div class="paperLabel">拡大後</div>
+
+<div id="scaledPaper" class="paper">
+100%
+</div>
+</div>
+
+</div>
+
+<div class="control">
+
+<input
+type="range"
+id="scaleSlider"
+min="10"
+max="300"
+value="100">
+
+</div>
+
+<div id="info"></div>
+
+<script>
+
+const scaleInput =
+document.getElementById("scaleInput");
+
+const scaleSlider =
+document.getElementById("scaleSlider");
+
+const scaledPaper =
+document.getElementById("scaledPaper");
+
+const info =
+document.getElementById("info");
+
+const decimalSelect =
+document.getElementById("decimalSelect");
+
+function updateStep(){
+
+    const decimals =
+    Number(decimalSelect.value);
+
+    const step =
+    Math.pow(10,-decimals);
+
+    scaleInput.step = step;
+    scaleSlider.step = step;
+}
+
+function updateDisplay(){
+
+    let scale =
+    parseFloat(scaleInput.value);
+
+    if(isNaN(scale)){
+        scale = 100;
+    }
+
+    scaleSlider.value = scale;
+
+    const width =
+    148 * scale / 100;
+
+    const height =
+    210 * scale / 100;
+
+    scaledPaper.style.width =
+    width + "px";
+
+    scaledPaper.style.height =
+    height + "px";
+
+    const decimals =
+    Number(decimalSelect.value);
+
+    scaledPaper.textContent =
+    scale.toFixed(decimals) + "%";
+
+    const realWidth =
+    210 * scale / 100;
+
+    const realHeight =
+    297 * scale / 100;
+
+    const areaRatio =
+    Math.pow(scale/100,2);
+
+    info.innerHTML =
+
+    `横 210 mm → ${realWidth.toFixed(decimals)} mm<br>
+     縦 297 mm → ${realHeight.toFixed(decimals)} mm<br><br>`;
+
+}
+
+decimalSelect.addEventListener(
+"change",
+()=>{
+    updateStep();
+    updateDisplay();
+}
+);
+
+scaleInput.addEventListener(
+"input",
+updateDisplay
+);
+
+scaleSlider.addEventListener(
+"input",
+()=>{
+    scaleInput.value =
+    scaleSlider.value;
+
+    updateDisplay();
+}
+);
+
+updateStep();
+updateDisplay();
+
+</script>
+
+</body>
+</html>
