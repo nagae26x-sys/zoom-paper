@@ -33,7 +33,7 @@ label{
 
 input[type="number"]{
     font-size:1.4rem;
-    width:140px;
+    width:160px;
     text-align:center;
 }
 
@@ -94,7 +94,7 @@ select{
 }
 
 #info{
-    font-size:1.4rem;
+    font-size:1.3rem;
     margin-top:20px;
     line-height:1.8;
     font-weight:bold;
@@ -119,6 +119,18 @@ select{
 </div>
 
 <div class="control">
+<label>基準文字サイズ (pt)</label>
+<br><br>
+
+<input
+type="number"
+id="baseSize"
+value="10"
+min="1"
+step="0.1">
+</div>
+
+<div class="control">
 <label>拡大率 (%)</label>
 <br><br>
 
@@ -138,7 +150,7 @@ value="100">
 
 <div id="a4Paper" class="paper">
 
-<div class="sampleText baseText">
+<div id="baseText" class="sampleText">
 福岡県<br>
 北九州市<br>
 八幡東区
@@ -195,11 +207,17 @@ document.getElementById("scaledPaper");
 const scaledText =
 document.getElementById("scaledText");
 
+const baseText =
+document.getElementById("baseText");
+
 const info =
 document.getElementById("info");
 
 const decimalSelect =
 document.getElementById("decimalSelect");
+
+const baseSize =
+document.getElementById("baseSize");
 
 function updateStep(){
 
@@ -222,6 +240,12 @@ function updateDisplay(){
         scale = 100;
     }
 
+    const decimals =
+    Number(decimalSelect.value);
+
+    const basePt =
+    parseFloat(baseSize.value) || 10;
+
     scaleSlider.value = scale;
 
     const width =
@@ -236,14 +260,14 @@ function updateDisplay(){
     scaledPaper.style.height =
     height + "px";
 
+    baseText.style.fontSize =
+    basePt + "pt";
+
     const currentPt =
-    10 * scale / 100;
+    basePt * scale / 100;
 
     scaledText.style.fontSize =
     currentPt + "pt";
-
-    const decimals =
-    Number(decimalSelect.value);
 
     const realWidth =
     210 * scale / 100;
@@ -256,11 +280,15 @@ function updateDisplay(){
 
     info.innerHTML =
 
-    `拡大後の文字サイズ：${currentPt.toFixed(decimals)} pt<br><br>
+    `基準文字サイズ：${basePt.toFixed(decimals)} pt<br><br>
+
+     拡大後の文字サイズ：${currentPt.toFixed(decimals)} pt<br><br>
 
      横 210 mm → ${realWidth.toFixed(decimals)} mm<br>
 
-     縦 297 mm → ${realHeight.toFixed(decimals)} mm<br><br>`;
+     縦 297 mm → ${realHeight.toFixed(decimals)} mm<br><br>
+
+     面積倍率：${areaRatio.toFixed(Math.max(4,decimals+2))} 倍`;
 
 }
 
@@ -273,6 +301,11 @@ decimalSelect.addEventListener(
 );
 
 scaleInput.addEventListener(
+"input",
+updateDisplay
+);
+
+baseSize.addEventListener(
 "input",
 updateDisplay
 );
